@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<title>Service Marketplace — device preview</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: #050507;
+    color: #e5e7eb;
+    font-family: -apple-system, "Segoe UI", Roboto, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 48px 24px;
+    gap: 32px;
+  }
+
+  h1 {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0;
+  }
+
+  p {
+    color: #9ca3af;
+    font-size: 14px;
+    max-width: 520px;
+    text-align: center;
+    margin: 0;
+  }
+
+  .cards {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .card {
+    width: 180px;
+    padding: 24px 16px;
+    border-radius: 16px;
+    background: #12121a;
+    border: 1px solid #23232e;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    transition: border-color 0.15s, transform 0.15s;
+  }
+
+  .card:hover {
+    border-color: #2dd4bf;
+    transform: translateY(-2px);
+  }
+
+  .card .dot {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 16px;
+    color: #020617;
+  }
+
+  .card span.name {
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .card span.port {
+    font-size: 12px;
+    color: #6b7280;
+  }
+
+  .admin {
+    margin-top: 8px;
+    font-size: 13px;
+    color: #2dd4bf;
+  }
+</style>
+</head>
+<body>
+  <h1>Service Marketplace — device preview</h1>
+  <p>
+    Each app runs headless (<code>flutter run -d web-server</code>) on its own
+    port; this page just frames it in a phone-sized iframe so it looks and
+    scales right regardless of how big your browser window is.
+  </p>
+  <p style="color:#f59e0b; max-width: 560px;">
+    Vendor doesn't finish booting inside an iframe (a narrow, reproducible
+    DDC-loader bug — Salesman/Customer are unaffected, and Vendor itself
+    works fine as a normal tab). Its card below opens it directly instead
+    of framing it.
+  </p>
+
+  <div class="cards">
+    <a class="card" href="http://localhost:5001" target="_blank" rel="noopener">
+      <div class="dot" style="background:#2dd4bf">V</div>
+      <span class="name">Vendor</span>
+      <span class="port">:5001 (opens standalone — see note below)</span>
+    </a>
+    <a class="card" href="preview.html#Salesman:5002">
+      <div class="dot" style="background:#f59e0b">S</div>
+      <span class="name">Salesman</span>
+      <span class="port">:5002</span>
+    </a>
+    <a class="card" href="preview.html#Customer:5003">
+      <div class="dot" style="background:#a78bfa">C</div>
+      <span class="name">Customer</span>
+      <span class="port">:5003</span>
+    </a>
+  </div>
+
+  <a class="admin" href="all.html">
+    Open all 3 side by side →
+  </a>
+  <a class="admin" href="http://localhost:8000/admin" target="_blank" rel="noopener">
+    Open admin panel →
+  </a>
+</body>
+</html>

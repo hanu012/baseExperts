@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<title>Device preview</title>
+<style>
+  :root {
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    height: 100%;
+    background: #050507;
+    font-family: -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+
+  body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    min-height: 100vh;
+    padding: 24px;
+  }
+
+  /*
+   * A real phone-sized iframe, not a widget-level trick — this is what
+   * actually fixes the scaling problem the in-app _PhoneFrame attempt
+   * hit: this app's .getSize()/.getFontSize() scale off GetX's
+   * Get.width/Get.height, which read the real rendering surface size
+   * directly and ignore any MediaQuery override injected from inside the
+   * Flutter widget tree. An iframe genuinely IS its own rendering
+   * surface at the CSS size given here, so Get.width naturally reports
+   * ~390 regardless of how large or maximized the outer browser window
+   * is — no window-size launch flags, no Flutter-side faking needed.
+   */
+  .phone {
+    position: relative;
+    width: 390px;
+    height: 844px;
+    border-radius: 44px;
+    background: #2a2a32;
+    padding: 10px;
+    box-shadow:
+      0 0 0 1.5px #3f3f4a,
+      0 30px 70px rgba(0, 0, 0, 0.65);
+    flex-shrink: 0;
+  }
+
+  .phone .screen {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: 34px;
+    overflow: hidden;
+    background: #020617;
+  }
+
+  .phone iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    display: block;
+  }
+
+  .notch {
+    position: absolute;
+    top: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 110px;
+    height: 24px;
+    background: #000;
+    border-radius: 14px;
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  .home-indicator {
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 110px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.45);
+    border-radius: 2px;
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  .label {
+    color: #9ca3af;
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .label a {
+    color: #2dd4bf;
+    text-decoration: none;
+    border: 1px solid #2dd4bf55;
+    border-radius: 999px;
+    padding: 3px 10px;
+    font-size: 12px;
+  }
+
+  .label a:hover {
+    background: #2dd4bf22;
+  }
+
+  .missing {
+    color: #f87171;
+    font-size: 13px;
+    max-width: 390px;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+  <div class="label">
+    <span id="title">Loading…</span>
+    <a href="#" id="reload">reload</a>
+    <a href="index.html">all apps</a>
+  </div>
+
+  <div class="phone" id="phone">
+    <div class="screen">
+      <div class="notch"></div>
+      <iframe
+        id="frame"
+        title="app preview"
+        allow="geolocation; camera; microphone"
+      ></iframe>
+      <div class="home-indicator"></div>
+    </div>
+  </div>
+
+  <script>
+    // #Vendor:5001 rather than ?title=Vendor&port=5001 — the & in a query
+    // string gets silently truncated when this URL is launched straight
+    // from a shell/Start-Process instead of typed into the address bar
+    // (confirmed: the port param vanished, leaving a bare preview.html).
+    // A hash fragment with a colon separator needs no & at all.
+    const [hashTitle, hashPort] = location.hash.replace(/^#/, '').split(':');
+    const port = hashPort || new URLSearchParams(location.search).get('port');
+    const title = hashTitle || new URLSearchParams(location.search).get('title') || 'App';
+    const url = port ? `http://localhost:${port}` : null;
+
+    document.title = `${title} — device preview`;
+    document.getElementById('title').textContent = `${title}${port ? ` · :${port}` : ''}`;
+
+    const frame = document.getElementById('frame');
+    if (url) {
+      frame.src = url;
+    } else {
+      document.getElementById('phone').innerHTML =
+        '<p class="missing">No ?port= given — open this via index.html.</p>';
+    }
+
+    document.getElementById('reload').addEventListener('click', (e) => {
+      e.preventDefault();
+      if (!url) return;
+      // Re-assigning the same src is a browser no-op — it silently does
+      // nothing rather than reloading, which is exactly why this button
+      // looked broken. Detour through about:blank to force a real navigation.
+      frame.src = 'about:blank';
+      requestAnimationFrame(() => { frame.src = url; });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(flutter analyze *)",
+      "Bash(flutter test *)",
+      "PowerShell($php = \\(Get-Command php\\).Source; $map = [ordered]@{ \"5050\"=\"build\\\\web_salesman\"; \"5051\"=\"build\\\\web_vendor\"; \"5052\"=\"build\\\\web_customer\" }; foreach \\($port in $map.Keys\\) { $p = Start-Process -FilePath $php -ArgumentList \"-S\",\"127.0.0.1:$port\",\"-t\",$map[$port] -WorkingDirectory \"C:\\\\Users\\\\Dell\\\\service-marketplace\\\\mobile\" -WindowStyle Hidden -PassThru; \"$port -> $\\($map[$port]\\) PID $\\($p.Id\\)\" })"
+    ]
+  }
+}

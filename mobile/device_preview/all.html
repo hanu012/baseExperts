@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<title>Service Marketplace — all apps</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    min-height: 100%;
+    background: #050507;
+    font-family: -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+
+  body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 28px;
+    padding: 32px 24px 48px;
+  }
+
+  h1 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #e5e7eb;
+    margin: 0;
+  }
+
+  .row {
+    display: flex;
+    gap: 28px;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+  }
+
+  .app {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #9ca3af;
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .label a {
+    color: #2dd4bf;
+    text-decoration: none;
+    border: 1px solid #2dd4bf55;
+    border-radius: 999px;
+    padding: 2px 8px;
+    font-size: 11px;
+  }
+
+  .label a:hover { background: #2dd4bf22; }
+
+  /* Scaled down a little from full 390x844 so three fit comfortably
+     side by side on a normal laptop screen without horizontal scroll —
+     transform: scale() keeps the iframe's real rendering surface at
+     390x844 (so the Flutter app inside still scales itself correctly),
+     it just shrinks the painted result visually. */
+  .phone-outer {
+    width: 330px;
+    height: 715px;
+  }
+
+  .phone {
+    position: relative;
+    width: 390px;
+    height: 844px;
+    border-radius: 44px;
+    background: #2a2a32;
+    padding: 10px;
+    box-shadow:
+      0 0 0 1.5px #3f3f4a,
+      0 24px 60px rgba(0, 0, 0, 0.65);
+    transform: scale(0.846);
+    transform-origin: top left;
+  }
+
+  .phone .screen {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: 34px;
+    overflow: hidden;
+    background: #020617;
+  }
+
+  .phone iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    display: block;
+  }
+
+  .notch {
+    position: absolute;
+    top: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 110px;
+    height: 24px;
+    background: #000;
+    border-radius: 14px;
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  .home-indicator {
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 110px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.45);
+    border-radius: 2px;
+    z-index: 2;
+    pointer-events: none;
+  }
+</style>
+</head>
+<body>
+  <h1>Service Marketplace — Vendor · Salesman · Customer</h1>
+
+  <div class="row" id="row"></div>
+
+  <script>
+    const apps = [
+      { title: 'Vendor', port: 5001, color: '#2dd4bf' },
+      { title: 'Salesman', port: 5002, color: '#f59e0b' },
+      { title: 'Customer', port: 5003, color: '#a78bfa' },
+    ];
+
+    const row = document.getElementById('row');
+
+    for (const app of apps) {
+      const wrap = document.createElement('div');
+      wrap.className = 'app';
+      wrap.innerHTML = `
+        <div class="label">
+          <span>${app.title} · :${app.port}</span>
+          <a href="#" data-port="${app.port}">reload</a>
+        </div>
+        <div class="phone-outer">
+          <div class="phone">
+            <div class="screen">
+              <div class="notch"></div>
+              <iframe
+              src="http://localhost:${app.port}"
+              title="${app.title} preview"
+              allow="geolocation; camera; microphone"
+            ></iframe>
+              <div class="home-indicator"></div>
+            </div>
+          </div>
+        </div>
+      `;
+      row.appendChild(wrap);
+
+      wrap.querySelector('a').addEventListener('click', (e) => {
+        e.preventDefault();
+        const iframe = wrap.querySelector('iframe');
+        const url = `http://localhost:${app.port}`;
+        // Same-URL reassignment is a browser no-op — detour through
+        // about:blank to force a real reload (see preview.html).
+        iframe.src = 'about:blank';
+        requestAnimationFrame(() => { iframe.src = url; });
+      });
+    }
+  </script>
+</body>
+</html>

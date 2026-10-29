@@ -1,0 +1,27 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Exact call length when a customer calls a vendor (customer app only,
+         merged over src/main for this flavour — the vendor and salesman
+         apps never ask for these).
+         READ_PHONE_STATE: hear the call go off-hook and back to idle.
+         SYSTEM_ALERT_WINDOW: the floating app bubble over the dialler, and
+         bringing the app back the moment the call ends. Both are optional —
+         without them the app falls back to its approximate timing. -->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+
+    <application>
+        <!-- PHONE_STATE is a protected system broadcast; exported is required
+             to receive it, and only the system can send it. -->
+        <receiver
+            android:name=".CallStateReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.PHONE_STATE"/>
+            </intent-filter>
+        </receiver>
+
+        <service
+            android:name=".CallBubbleService"
+            android:exported="false"/>
+    </application>
+</manifest>
